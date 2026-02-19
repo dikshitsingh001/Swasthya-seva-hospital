@@ -1,4 +1,3 @@
-Swasthya_Seva_hospital
 pulseiq/
 ├─ backend/
 │   ├─ server.js
@@ -8,31 +7,6 @@ pulseiq/
 │   ├─ style.css
 │   └─ script.js
 ├─ package.json
-const express = require('express');
-const fs = require('fs');
-const cors = require('cors');
-const app = express();
-const PORT = 3000;
-
-app.use(cors());
-app.use(express.json());
-
-const usersFile = './backend/users.json';
-let users = JSON.parse(fs.readFileSync(usersFile, 'utf-8'));
-
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    const user = users.find(u => u.username === username && u.password === password);
-    if(user){
-        res.json({ success: true, role: user.role });
-    } else {
-        res.json({ success: false, message: 'Invalid credentials' });
-    }
-});
-
-app.listen(PORT, () => {
-    console.log(`Backend running at http://localhost:${PORT}`);
-});
 [
     {"username":"admin1","password":"admin123","role":"Admin"},
     {"username":"doctor1","password":"doc123","role":"Doctor"},
