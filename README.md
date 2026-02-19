@@ -1,18 +1,3 @@
-pulseiq/
-├─ backend/
-│   ├─ server.js
-│   └─ users.json
-├─ frontend/
-│   ├─ index.html
-│   ├─ style.css
-│   └─ script.js
-├─ package.json
-[
-    {"username":"admin1","password":"admin123","role":"Admin"},
-    {"username":"doctor1","password":"doc123","role":"Doctor"},
-    {"username":"nurse1","password":"nurse123","role":"Nurse"},
-    {"username":"ambulance1","password":"amb123","role":"Ambulance Desk"}
-]
 <!DOCTYPE html>
 <html>
 <head>
@@ -151,45 +136,3 @@ body { margin:0; font-family: Arial, sans-serif; background:#eef2f6; }
 .graph { background:white; padding:20px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin-bottom:20px; }
 
 footer { background:#2c3e50; color:white; text-align:center; padding:15px; }
-// LOGIN
-async function login(){
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const msg = document.getElementById('login-msg');
-
-    if(!username || !password){
-        msg.innerText = "Enter both fields";
-        return;
-    }
-
-    const res = await fetch('http://localhost:3000/login', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({username,password})
-    });
-
-    const data = await res.json();
-
-    if(data.success){
-        document.querySelector('.login-card').style.display = 'none';
-        document.querySelector('.dashboard').style.display = 'block';
-        document.getElementById('user-role-display').innerText = data.role;
-    } else {
-        msg.innerText = data.message;
-    }
-}
-
-// DEMO CHART
-const ctx = document.getElementById('vitalsChart').getContext('2d');
-const vitalsChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['0s','10s','20s','30s','40s','50s','60s'],
-        datasets: [
-            { label:'Heart Rate', data:[80,85,78,90,95,88,92], borderColor:'#e74c3c', fill:false, tension:0.3 },
-            { label:'SpO2', data:[98,97,96,95,97,96,98], borderColor:'#27ae60', fill:false, tension:0.3 },
-            { label:'BP', data:[120,125,130,128,122,118,124], borderColor:'#3498db', fill:false, tension:0.3 }
-        ]
-    },
-    options:{ responsive:true, plugins:{ legend:{position:'top'} } }
-});
