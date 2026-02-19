@@ -2,22 +2,15 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>PulseIQ – Hospital Dashboard</title>
+    <title>PulseIQ Login</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
-<div class="header">
-    <h1>PulseIQ – Hospital Dashboard</h1>
-    <p>Hospital: Meerut District Hospital</p>
-    <div id="user-role-display"></div>
-</div>
 
 <div class="container">
 
     <!-- LOGIN CARD -->
-    <div class="login-card">
+    <div class="login-card" id="login-card">
         <h2>Login</h2>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
@@ -26,82 +19,91 @@
     </div>
 
     <!-- DASHBOARD -->
-    <div class="dashboard" style="display:none;">
-
-        <div class="card-row">
-            <div class="card total-patients">
-                <h3>Total Patients</h3>
-                <p>128</p>
-            </div>
-            <div class="card available-beds">
-                <h3>Available Beds</h3>
-                <p>22</p>
-            </div>
-            <div class="card staff-duty">
-                <h3>Staff on Duty</h3>
-                <p>Doctors:12 | Nurses:18 | Ambulances:4</p>
-            </div>
-        </div>
-
-        <div class="alerts">
-            <h3>Alerts</h3>
-            <ul>
-                <li class="critical">ICU 5 – High Heart Rate</li>
-                <li>Ward 12 – Low Oxygen Level</li>
-                <li class="critical">ER – Ventilator Disconnected</li>
-            </ul>
-        </div>
-
-        <div class="patient-table">
-            <h3>Patient List</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Bed</th>
-                        <th>Heart Rate</th>
-                        <th>BP</th>
-                        <th>SpO2</th>
-                        <th>Assigned Doctor</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>John Doe</td>
-                        <td>56</td>
-                        <td>ICU5</td>
-                        <td>120</td>
-                        <td>140/90</td>
-                        <td>92%</td>
-                        <td>Dr. Sharma</td>
-                    </tr>
-                    <tr>
-                        <td>Mary Jane</td>
-                        <td>45</td>
-                        <td>Ward12</td>
-                        <td>80</td>
-                        <td>120/80</td>
-                        <td>98%</td>
-                        <td>Dr. Singh</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="graph">
-            <h3>Real-Time Monitoring (Demo)</h3>
-            <canvas id="vitalsChart" width="800" height="300"></canvas>
-        </div>
-
+    <div class="dashboard" id="dashboard" style="display:none;">
+        <h2>Welcome, <span id="user-role"></span></h2>
+        <p>This is a simple dashboard demo.</p>
+        <button onclick="logout()">Logout</button>
     </div>
 
 </div>
 
-<footer>
-    © 2026 PulseIQ Monitoring System
-</footer>
-
 <script src="script.js"></script>
 </body>
 </html>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg, #3498db, #2ecc71);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    text-align: center;
+    width: 300px;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #2c80b4;
+}
+
+#login-msg {
+    color: red;
+    margin-top: 10px;
+}
+// Demo users (frontend only)
+const users = [
+    {username: "admin1", password: "admin123", role: "Admin"},
+    {username: "doctor1", password: "doc123", role: "Doctor"},
+    {username: "nurse1", password: "nurse123", role: "Nurse"},
+    {username: "ambulance1", password: "amb123", role: "Ambulance Desk"}
+];
+
+function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('login-msg');
+
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if(user){
+        document.getElementById('login-card').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('user-role').innerText = user.role;
+        msg.innerText = '';
+    } else {
+        msg.innerText = 'Invalid username or password';
+    }
+}
+
+function logout() {
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('login-card').style.display = 'block';
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+}
+
