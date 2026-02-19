@@ -1,19 +1,63 @@
+Swasthya_Seva_hospital
+pulseiq/
+├─ backend/
+│   ├─ server.js
+│   └─ users.json
+├─ frontend/
+│   ├─ index.html
+│   ├─ style.css
+│   └─ script.js
+├─ package.json
+const express = require('express');
+const fs = require('fs');
+const cors = require('cors');
+const app = express();
+const PORT = 3000;
+
+app.use(cors());
+app.use(express.json());
+
+const usersFile = './backend/users.json';
+let users = JSON.parse(fs.readFileSync(usersFile, 'utf-8'));
+
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const user = users.find(u => u.username === username && u.password === password);
+    if(user){
+        res.json({ success: true, role: user.role });
+    } else {
+        res.json({ success: false, message: 'Invalid credentials' });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Backend running at http://localhost:${PORT}`);
+});
+[
+    {"username":"admin1","password":"admin123","role":"Admin"},
+    {"username":"doctor1","password":"doc123","role":"Doctor"},
+    {"username":"nurse1","password":"nurse123","role":"Nurse"},
+    {"username":"ambulance1","password":"amb123","role":"Ambulance Desk"}
+]
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>PulseIQ – Hospital Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="header">
     <h1>PulseIQ – Hospital Dashboard</h1>
     <p>Hospital: Meerut District Hospital</p>
+    <div id="user-role-display"></div>
 </div>
 
 <div class="container">
 
+    <!-- LOGIN CARD -->
     <div class="login-card">
         <h2>Login</h2>
         <input type="text" id="username" placeholder="Username">
@@ -22,72 +66,156 @@
         <p id="login-msg"></p>
     </div>
 
+    <!-- DASHBOARD -->
     <div class="dashboard" style="display:none;">
-        <h2>Welcome <span id="user-role"></span></h2>
+
         <div class="card-row">
-            <div class="card">
+            <div class="card total-patients">
                 <h3>Total Patients</h3>
                 <p>128</p>
             </div>
-            <div class="card">
+            <div class="card available-beds">
                 <h3>Available Beds</h3>
                 <p>22</p>
             </div>
-            <div class="card">
+            <div class="card staff-duty">
                 <h3>Staff on Duty</h3>
-                <p>Doctors:12 | Nurses:18</p>
+                <p>Doctors:12 | Nurses:18 | Ambulances:4</p>
             </div>
         </div>
+
         <div class="alerts">
             <h3>Alerts</h3>
             <ul>
-                <li>ICU 5 – High Heart Rate</li>
+                <li class="critical">ICU 5 – High Heart Rate</li>
                 <li>Ward 12 – Low Oxygen Level</li>
-                <li>ER – Ventilator Disconnected</li>
+                <li class="critical">ER – Ventilator Disconnected</li>
             </ul>
         </div>
+
+        <div class="patient-table">
+            <h3>Patient List</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Bed</th>
+                        <th>Heart Rate</th>
+                        <th>BP</th>
+                        <th>SpO2</th>
+                        <th>Assigned Doctor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>56</td>
+                        <td>ICU5</td>
+                        <td>120</td>
+                        <td>140/90</td>
+                        <td>92%</td>
+                        <td>Dr. Sharma</td>
+                    </tr>
+                    <tr>
+                        <td>Mary Jane</td>
+                        <td>45</td>
+                        <td>Ward12</td>
+                        <td>80</td>
+                        <td>120/80</td>
+                        <td>98%</td>
+                        <td>Dr. Singh</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="graph">
+            <h3>Real-Time Monitoring (Demo)</h3>
+            <canvas id="vitalsChart" width="800" height="300"></canvas>
+        </div>
+
     </div>
 
 </div>
 
+<footer>
+    © 2026 PulseIQ Monitoring System
+</footer>
+
 <script src="script.js"></script>
 </body>
 </html>
-body { font-family: Arial; background: #f2f4f8; margin:0; }
-.header { background: #2f3e5c; color:white; padding:20px; text-align:center; }
-.container { padding: 20px; max-width: 900px; margin:auto; }
-.login-card { background:white; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin-bottom:20px; text-align:center; }
-.login-card input { padding:10px; margin:10px 0; width:80%; }
-.login-card button { padding:10px 20px; background:#2d6cdf; color:white; border:none; cursor:pointer; }
-.login-card p { color:red; }
-.dashboard { background:white; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
-.card-row { display:flex; gap:20px; margin-bottom:20px; }
-.card { flex:1; background:#f8f9fb; padding:15px; border-radius:8px; text-align:center; }
-.alerts { background:#fff3cd; padding:10px; border-left:5px solid #ff9800; border-radius:5px; }
-async function login() {
+body { margin:0; font-family: Arial, sans-serif; background:#eef2f6; }
+.header { background:#2c3e50; color:white; padding:20px; text-align:center; position:relative; }
+#user-role-display { position:absolute; right:20px; top:30px; color:#f1c40f; font-weight:bold; }
+
+.container { padding:20px; max-width:1200px; margin:auto; }
+
+.login-card { background:#ffffff; padding:30px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2); text-align:center; }
+.login-card input { padding:10px; margin:10px 0; width:80%; border-radius:5px; border:1px solid #ccc; }
+.login-card button { padding:10px 25px; margin-top:10px; border:none; background:#27ae60; color:white; font-weight:bold; cursor:pointer; border-radius:5px; }
+.login-card button:hover { background:#2ecc71; }
+#login-msg { color:red; }
+
+.dashboard { margin-top:20px; }
+
+.card-row { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px; }
+.card { flex:1; min-width:200px; padding:20px; border-radius:15px; color:white; font-weight:bold; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.15); }
+.total-patients { background:#3498db; }
+.available-beds { background:#2ecc71; }
+.staff-duty { background:#e67e22; }
+
+.alerts { background:#fef9e7; padding:15px; border-left:6px solid #f1c40f; border-radius:10px; margin-bottom:20px; }
+.alerts .critical { border-left:6px solid red; background:#fdecea; }
+
+.patient-table table { width:100%; border-collapse:collapse; background:white; border-radius:10px; overflow:hidden; }
+.patient-table th, td { padding:12px; border-bottom:1px solid #ddd; text-align:center; }
+.patient-table th { background:#34495e; color:white; }
+.patient-table tr:nth-child(even) { background:#f2f2f2; }
+
+.graph { background:white; padding:20px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin-bottom:20px; }
+
+footer { background:#2c3e50; color:white; text-align:center; padding:15px; }
+// LOGIN
+async function login(){
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const msg = document.getElementById('login-msg');
 
-    if(!username || !password) {
+    if(!username || !password){
         msg.innerText = "Enter both fields";
         return;
     }
 
     const res = await fetch('http://localhost:3000/login', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ username, password })
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({username,password})
     });
 
     const data = await res.json();
 
-    if(data.success) {
+    if(data.success){
         document.querySelector('.login-card').style.display = 'none';
         document.querySelector('.dashboard').style.display = 'block';
-        document.getElementById('user-role').innerText = data.role;
+        document.getElementById('user-role-display').innerText = data.role;
     } else {
         msg.innerText = data.message;
     }
 }
 
+// DEMO CHART
+const ctx = document.getElementById('vitalsChart').getContext('2d');
+const vitalsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['0s','10s','20s','30s','40s','50s','60s'],
+        datasets: [
+            { label:'Heart Rate', data:[80,85,78,90,95,88,92], borderColor:'#e74c3c', fill:false, tension:0.3 },
+            { label:'SpO2', data:[98,97,96,95,97,96,98], borderColor:'#27ae60', fill:false, tension:0.3 },
+            { label:'BP', data:[120,125,130,128,122,118,124], borderColor:'#3498db', fill:false, tension:0.3 }
+        ]
+    },
+    options:{ responsive:true, plugins:{ legend:{position:'top'} } }
+});
