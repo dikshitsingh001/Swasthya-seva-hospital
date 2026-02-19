@@ -105,34 +105,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-body { margin:0; font-family: Arial, sans-serif; background:#eef2f6; }
-.header { background:#2c3e50; color:white; padding:20px; text-align:center; position:relative; }
-#user-role-display { position:absolute; right:20px; top:30px; color:#f1c40f; font-weight:bold; }
-
-.container { padding:20px; max-width:1200px; margin:auto; }
-
-.login-card { background:#ffffff; padding:30px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2); text-align:center; }
-.login-card input { padding:10px; margin:10px 0; width:80%; border-radius:5px; border:1px solid #ccc; }
-.login-card button { padding:10px 25px; margin-top:10px; border:none; background:#27ae60; color:white; font-weight:bold; cursor:pointer; border-radius:5px; }
-.login-card button:hover { background:#2ecc71; }
-#login-msg { color:red; }
-
-.dashboard { margin-top:20px; }
-
-.card-row { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px; }
-.card { flex:1; min-width:200px; padding:20px; border-radius:15px; color:white; font-weight:bold; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.15); }
-.total-patients { background:#3498db; }
-.available-beds { background:#2ecc71; }
-.staff-duty { background:#e67e22; }
-
-.alerts { background:#fef9e7; padding:15px; border-left:6px solid #f1c40f; border-radius:10px; margin-bottom:20px; }
-.alerts .critical { border-left:6px solid red; background:#fdecea; }
-
-.patient-table table { width:100%; border-collapse:collapse; background:white; border-radius:10px; overflow:hidden; }
-.patient-table th, td { padding:12px; border-bottom:1px solid #ddd; text-align:center; }
-.patient-table th { background:#34495e; color:white; }
-.patient-table tr:nth-child(even) { background:#f2f2f2; }
-
-.graph { background:white; padding:20px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin-bottom:20px; }
-
-footer { background:#2c3e50; color:white; text-align:center; padding:15px; }
